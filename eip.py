@@ -256,7 +256,7 @@ def _multiRead(self, args):
 
     if not _connect(self): return None
 
-    for i in xrange(tagCount):
+    for i in range(tagCount):
         tag,base,ind = TagNameParser(args[i], 0)
         InitialRead(self, tag, base)
     
@@ -277,10 +277,10 @@ def _multiRead(self, args):
     offsets = pack('<H', temp)
 
     # assemble all the segments
-    for i in xrange(tagCount):
+    for i in range(tagCount):
         segments += serviceSegments[i]
 
-    for i in xrange(tagCount-1):	
+    for i in range(tagCount-1):
         temp += len(serviceSegments[i])
         offsets += pack('<H', temp)
 
@@ -499,7 +499,7 @@ def _connect(self):
         self.SessionHandle = unpack_from('<I', retData, 4)[0]
     else:
         self.SocketConnected = False
-        print "Failed to register session"
+        print("Failed to register session")
         return False
 
     retData = _getBytes(self, _buildForwardOpenPacket(self))
@@ -508,7 +508,7 @@ def _connect(self):
         self.SocketConnected = True
     else:
         self.SocketConnected = False
-        print "Forward Open Failed"
+        print("Forward Open Failed")
         return False
     
     return True
@@ -537,11 +537,13 @@ def _getBytes(self, data):
             return retData
         else:
             return None
-    except socket.gaierror, e:
+    except socket.gaierror as e:
         self.SocketConnected = False
+        print(e)
         return None
-    except IOError, e:
+    except IOError as e:
         self.SocketConnected = False
+        print(e)
         return None
         
 def _buildRegisterSession(self):
@@ -755,7 +757,7 @@ def _buildTagIOI(self, tagName, isBoolArray):
     tagArray = tagName.split(".")
 
     # this loop figures out the packet length and builds our packet
-    for i in xrange(len(tagArray)):
+    for i in range(len(tagArray)):
         if tagArray[i].endswith("]"):
             tag, basetag, index = TagNameParser(tagArray[i], 0)
             
@@ -780,7 +782,7 @@ def _buildTagIOI(self, tagName, isBoolArray):
                     if index > 65535:
                         RequestTagData += pack('<HI', 0x2A, index)
                 else:
-                    for i in xrange(len(index)):
+                    for i in range(len(index)):
                         if index[i] < 256:                                  # if index is 1 byte...
                             RequestTagData += pack('<BB', 0x28, index[i])   # add one word to packet
                         if 65536 > index[i] > 255:                          # if index is more than 1 byte...
@@ -856,7 +858,7 @@ def _addWriteIOI(self, tagIOI, writeData, dataType):
 
     for v in writeData:
         try:
-            for i in xrange(len(v)):
+            for i in range(len(v)):
                 el = v[i]
                 CIPWriteRequest += pack(self.CIPTypes[dataType][2],el)
         except:
@@ -1197,7 +1199,7 @@ def TagNameParser(tag, offset):
             else:
                 # if we have a multi dim array, return the index
                 ind = []
-                for i in xrange(len(s)):
+                for i in range(len(s)):
                     s[i] = int(s[i])
                     ind.append(s[i])
         else:
@@ -1216,7 +1218,7 @@ def MultiParser(self, tags, data):
     
     # get the offset values for each of the tags in the packet
     reply = []
-    for i in xrange(tagCount):
+    for i in range(tagCount):
         loc = 2+(i*2)
         offset = unpack_from('<H', stripped, loc)[0]
         replyStatus = unpack_from('<b', stripped, offset+2)[0]
@@ -1258,7 +1260,7 @@ def MakeString(self, string):
     for char in string:
         work.append(ord(char))
     if not self.Micro800:
-        for x in xrange(len(string), 84):
+        for x in range(len(string), 84):
             work.append(0x00)
     return work
 
